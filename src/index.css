@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 220 15% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 220 15% 20%;
+
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 46%;
+
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 85%;
+    --input: 220 15% 90%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;
+    
+    --sidebar-bg: 240 10% 97%;
+    --sidebar-border: 220 15% 90%;
+    
+    --metric-border: 220 15% 75%;
+    --table-header: 220 15% 96%;
+    --table-alt-row: 220 10% 98%;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 15% 12%;
+    --foreground: 220 10% 90%;
+
+    --card: 220 15% 15%;
+    --card-foreground: 220 10% 90%;
+
+    --popover: 220 15% 15%;
+    --popover-foreground: 220 10% 90%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 220 10% 90%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 0 72% 51%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 15% 25%;
+    --input: 220 15% 25%;
+    --ring: 217 91% 60%;
+    
+    --sidebar-bg: 220 15% 10%;
+    --sidebar-border: 220 15% 20%;
+    
+    --metric-border: 220 15% 35%;
+    --table-header: 220 15% 18%;
+    --table-alt-row: 220 15% 14%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Force scrollbars to always be visible */
+.sector-profile-scroll,
+.research-alert-scroll {
+  overflow-x: scroll !important;
+  overflow-y: scroll !important;
+}
+
+.sector-profile-scroll::-webkit-scrollbar,
+.research-alert-scroll::-webkit-scrollbar {
+  -webkit-appearance: none;
+  height: 11px;
+  width: 11px;
+}
+
+.sector-profile-scroll::-webkit-scrollbar-thumb,
+.research-alert-scroll::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-clip: content-box;
+}
+
+.sector-profile-scroll::-webkit-scrollbar-track,
+.research-alert-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
