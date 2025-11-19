@@ -3,10 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import zevinLogo from "@/assets/zevin-logo.png";
 import { api, StockInfoResponse, BondInfoResponse } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
@@ -28,21 +24,17 @@ export const PortfolioSidebar = ({
   stockHoldings = [],
   bondHoldings = [],
 }: PortfolioSidebarProps) => {
-  const [stockDate, setStockDate] = useState<Date>(new Date());
-  const [bondDate, setBondDate] = useState<Date>(new Date());
   const [ticker, setTicker] = useState("");
-  const [units, setUnits] = useState("");
-  const [purchasePrice, setPurchasePrice] = useState("");
+  const [stockWeight, setStockWeight] = useState("");
   const [cusip, setCusip] = useState("");
-  const [bondUnits, setBondUnits] = useState("");
-  const [bondPurchasePrice, setBondPurchasePrice] = useState("100.00");
+  const [bondWeight, setBondWeight] = useState("");
   const [isAddingStock, setIsAddingStock] = useState(false);
   const [isAddingBond, setIsAddingBond] = useState(false);
   const [selectedStockIndex, setSelectedStockIndex] = useState<string>("");
   const [selectedBondIndex, setSelectedBondIndex] = useState<string>("");
 
   const handleAddStock = async () => {
-    if (!ticker || !units || !stockDate) {
+    if (!ticker || !stockWeight) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -51,15 +43,21 @@ export const PortfolioSidebar = ({
       return;
     }
 
+    const weightPercent = parseFloat(stockWeight);
+    if (isNaN(weightPercent) || weightPercent <= 0 || weightPercent > 100) {
+      toast({
+        title: "Error",
+        description: "Weight must be a number between 0 and 100",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAddingStock(true);
     try {
-      const purchaseDateStr = format(stockDate, "yyyy-MM-dd");
-      console.log("Adding stock:", { ticker, units, purchaseDateStr });
       const stockData = await api.getStockInfo({
         ticker: ticker.trim(),
-        units: parseInt(units),
-        purchase_date: purchaseDateStr,
-        purchase_price: purchasePrice ? parseFloat(purchasePrice) : undefined,
+        weight: weightPercent,
       });
 
       console.log("Stock data received:", stockData);
@@ -71,9 +69,7 @@ export const PortfolioSidebar = ({
 
       // Reset form
       setTicker("");
-      setUnits("");
-      setPurchasePrice("");
-      setStockDate(new Date());
+      setStockWeight("");
 
       toast({
         title: "Success",
@@ -91,7 +87,7 @@ export const PortfolioSidebar = ({
   };
 
   const handleAddBond = async () => {
-    if (!cusip || !bondUnits || !bondDate) {
+    if (!cusip || !bondWeight) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -100,14 +96,21 @@ export const PortfolioSidebar = ({
       return;
     }
 
+    const weightPercent = parseFloat(bondWeight);
+    if (isNaN(weightPercent) || weightPercent <= 0 || weightPercent > 100) {
+      toast({
+        title: "Error",
+        description: "Weight must be a number between 0 and 100",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAddingBond(true);
     try {
-      const purchaseDateStr = format(bondDate, "yyyy-MM-dd");
       const bondData = await api.getBondInfo({
         cusip: cusip.trim(),
-        units: parseInt(bondUnits),
-        purchase_price: parseFloat(bondPurchasePrice),
-        purchase_date: purchaseDateStr,
+        weight: weightPercent,
       });
 
       if (onBondAdded) {
@@ -116,9 +119,7 @@ export const PortfolioSidebar = ({
 
       // Reset form
       setCusip("");
-      setBondUnits("");
-      setBondPurchasePrice("100.00");
-      setBondDate(new Date());
+      setBondWeight("");
 
       toast({
         title: "Success",
@@ -161,34 +162,24 @@ export const PortfolioSidebar = ({
               />
             </div>
             <div>
-              <Label htmlFor="units" className="text-xs text-muted-foreground">Enter number of units</Label>
+              <Label htmlFor="weight" className="text-xs text-muted-foreground">Enter weight (%)</Label>
               <Input 
-                id="units" 
+                id="weight" 
                 type="number" 
-                value={units}
-                onChange={(e) => setUnits(e.target.value)}
-                placeholder="1" 
+                value={stockWeight}
+                onChange={(e) => setStockWeight(e.target.value)}
+                placeholder="10.5" 
+                step="0.1"
+                min="0"
+                max="100"
                 className="mt-1" 
               />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Select transaction date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal mt-1">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {stockDate ? format(stockDate, "yyyy-MM-dd") : "Select date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent mode="single" selected={stockDate} onSelect={setStockDate} />
-                </PopoverContent>
-              </Popover>
+              <p className="text-xs text-muted-foreground mt-1">Portfolio weight as a percentage</p>
             </div>
             <Button 
               className="w-full"
               onClick={handleAddStock}
-              disabled={isAddingStock || !ticker || !units || !stockDate}
+              disabled={isAddingStock || !ticker || !stockWeight}
             >
               {isAddingStock ? "Adding..." : "Add Stock"}
             </Button>
@@ -216,7 +207,7 @@ export const PortfolioSidebar = ({
                   ) : (
                     stockHoldings.map((stock, index) => (
                       <SelectItem key={index} value={index.toString()}>
-                        {stock.stock} - {stock.units} units
+                        {stock.stock} - {stock.weight?.toFixed(2) || "0.00"}%
                       </SelectItem>
                     ))
                   )}
@@ -260,45 +251,24 @@ export const PortfolioSidebar = ({
               />
             </div>
             <div>
-              <Label htmlFor="bond-units" className="text-xs text-muted-foreground">Units (Face Value)</Label>
+              <Label htmlFor="bond-weight" className="text-xs text-muted-foreground">Enter weight (%)</Label>
               <Input 
-                id="bond-units" 
+                id="bond-weight" 
                 type="number" 
-                value={bondUnits}
-                onChange={(e) => setBondUnits(e.target.value)}
-                placeholder="10000" 
+                value={bondWeight}
+                onChange={(e) => setBondWeight(e.target.value)}
+                placeholder="10.5" 
+                step="0.1"
+                min="0"
+                max="100"
                 className="mt-1" 
               />
-            </div>
-            <div>
-              <Label htmlFor="purchase-price" className="text-xs text-muted-foreground">Purchase Price (% of par)</Label>
-              <Input 
-                id="purchase-price" 
-                type="number" 
-                value={bondPurchasePrice}
-                onChange={(e) => setBondPurchasePrice(e.target.value)}
-                step="0.01" 
-                className="mt-1" 
-              />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Purchase Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal mt-1">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {bondDate ? format(bondDate, "yyyy-MM-dd") : "Select date"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <CalendarComponent mode="single" selected={bondDate} onSelect={setBondDate} />
-                </PopoverContent>
-              </Popover>
+              <p className="text-xs text-muted-foreground mt-1">Portfolio weight as a percentage</p>
             </div>
             <Button 
               className="w-full"
               onClick={handleAddBond}
-              disabled={isAddingBond || !cusip || !bondUnits || !bondDate}
+              disabled={isAddingBond || !cusip || !bondWeight}
             >
               {isAddingBond ? "Adding..." : "Add Bond"}
             </Button>
@@ -326,7 +296,7 @@ export const PortfolioSidebar = ({
                   ) : (
                     bondHoldings.map((bond, index) => (
                       <SelectItem key={index} value={index.toString()}>
-                        {bond.cusip} - {bond.units} units
+                        {bond.cusip} - {bond.weight?.toFixed(2) || "0.00"}%
                       </SelectItem>
                     ))
                   )}

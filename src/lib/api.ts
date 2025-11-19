@@ -4,56 +4,56 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000
 // Types
 export interface StockInfoRequest {
   ticker: string;
-  units: number;
-  purchase_date: string;
-  purchase_price?: number;
+  weight: number;
 }
 
 export interface StockInfoResponse {
   stock: string;
-  units: number;
-  purchase_date: string;
-  purchase_price: number;
-  current_price: number;
-  initial_investment: number;
-  current_value: number;
-  gain_loss: number;
-  gain_loss_percentage: number;
+  weight: number;
   sector: string;
   sector_total_score: number;
   sector_mean_score: number;
   security_total_score: number;
   security_mean_score: number;
+  // Legacy fields for backward compatibility (may not be present in new API)
+  units?: number;
+  purchase_date?: string;
+  purchase_price?: number;
+  current_price?: number;
+  initial_investment?: number;
+  current_value?: number;
+  gain_loss?: number;
+  gain_loss_percentage?: number;
 }
 
 export interface BondInfoRequest {
   cusip: string;
-  units: number;
-  purchase_price: number;
-  purchase_date: string;
+  weight: number;
 }
 
 export interface BondInfoResponse {
   cusip: string;
-  name: string;
+  weight: number;
   industry_group: string;
-  issuer: string;
-  units: number;
-  purchase_price: number;
-  purchase_date: string;
-  current_price: number;
-  coupon: number;
-  maturity_date: string;
-  ytm: number;
-  market_value: number;
-  total_cost: number;
-  price_return: number;
-  income_return: number;
-  total_return: number;
-  sector_total_score: number;
-  sector_mean_score: number;
-  security_total_score: number;
-  security_mean_score: number;
+  sector_total_score?: number;
+  sector_mean_score?: number;
+  security_total_score?: number;
+  security_mean_score?: number;
+  // Legacy fields for backward compatibility (may not be present in new API)
+  name?: string;
+  issuer?: string;
+  units?: number;
+  purchase_price?: number;
+  purchase_date?: string;
+  current_price?: number;
+  coupon?: number;
+  maturity_date?: string;
+  ytm?: number;
+  market_value?: number;
+  total_cost?: number;
+  price_return?: number;
+  income_return?: number;
+  total_return?: number;
 }
 
 export interface PortfolioHarmScoresRequest {

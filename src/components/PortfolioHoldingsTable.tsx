@@ -47,10 +47,8 @@ const normalizeHolding = (
 ) => {
   if (type === "stocks") {
     const stock = holding as StockInfoResponse;
-    const currentValue = stock.current_value ?? 0;
-    const portfolioAllocation = totalPortfolioValue > 0 
-      ? (currentValue / totalPortfolioValue) * 100 
-      : 0;
+    // Use weight from API response directly
+    const portfolioAllocation = stock.weight ?? 0;
     
     return {
       identifier: stock.stock || "",
@@ -63,7 +61,7 @@ const normalizeHolding = (
       portfolioAllocation,
       sector: stock.sector || "",
       purchasePrice: stock.purchase_price ?? null,
-      currentValue,
+      currentValue: stock.current_value ?? 0,
       sectorTotalScore: stock.sector_total_score ?? null,
       sectorMeanScore: stock.sector_mean_score ?? null,
       securityTotalScore: stock.security_total_score ?? null,
@@ -71,25 +69,23 @@ const normalizeHolding = (
     };
   } else {
     const bond = holding as BondInfoResponse;
-    const totalReturn = bond.total_return ?? 0;
-    const totalCost = bond.total_cost ?? 1;
-    const currentValue = bond.market_value ?? 0;
-    const portfolioAllocation = totalPortfolioValue > 0 
-      ? (currentValue / totalPortfolioValue) * 100 
-      : 0;
+    // Use weight from API response directly
+    const portfolioAllocation = bond.weight ?? 0;
     
     return {
       identifier: bond.cusip || "",
       units: bond.units || 0,
       purchaseDate: bond.purchase_date || "",
       currentPrice: bond.current_price ?? null,
-      initialInvestment: totalCost,
-      gainLoss: totalReturn,
-      gainLossPercent: totalCost > 0 ? (totalReturn / totalCost) * 100 : 0,
+      initialInvestment: bond.total_cost ?? null,
+      gainLoss: bond.total_return ?? null,
+      gainLossPercent: bond.total_cost && bond.total_cost > 0 
+        ? ((bond.total_return ?? 0) / bond.total_cost) * 100 
+        : 0,
       portfolioAllocation,
       sector: bond.industry_group || "",
       purchasePrice: bond.purchase_price ?? null,
-      currentValue,
+      currentValue: bond.market_value ?? 0,
       sectorTotalScore: bond.sector_total_score ?? null,
       sectorMeanScore: bond.sector_mean_score ?? null,
       securityTotalScore: bond.security_total_score ?? null,
@@ -125,16 +121,8 @@ export const PortfolioHoldingsTable = ({
             <TableRow className="bg-table-header hover:bg-table-header">
               <TableHead className="font-medium text-foreground">#</TableHead>
               <TableHead className="font-medium text-foreground">{type === "stocks" ? "Stock" : "CUSIP"}</TableHead>
-              <TableHead className="font-medium text-foreground">Units</TableHead>
-              <TableHead className="font-medium text-foreground">Purchase Date</TableHead>
-              <TableHead className="font-medium text-foreground">Current Price ($)</TableHead>
-              <TableHead className="font-medium text-foreground">Initial Investment ($)</TableHead>
-              <TableHead className="font-medium text-foreground">Gain/Loss ($)</TableHead>
-              <TableHead className="font-medium text-foreground">Gain/Loss (%)</TableHead>
-              <TableHead className="font-medium text-foreground">Portfolio Allocation</TableHead>
+              <TableHead className="font-medium text-foreground">Weight (%)</TableHead>
               <TableHead className="font-medium text-foreground">{type === "stocks" ? "Sector" : "Industry Group"}</TableHead>
-              <TableHead className="font-medium text-foreground">Purchase Price ($)</TableHead>
-              <TableHead className="font-medium text-foreground">Current Value ($)</TableHead>
               <TableHead className="font-medium text-foreground">Sector Total Score</TableHead>
               <TableHead className="font-medium text-foreground">Sector Mean Score</TableHead>
               <TableHead className="font-medium text-foreground">Security Total Score</TableHead>
@@ -146,20 +134,8 @@ export const PortfolioHoldingsTable = ({
               <TableRow key={index} className={index % 2 === 0 ? "bg-background" : "bg-muted/30"}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell className="font-medium">{holding.identifier}</TableCell>
-                <TableCell>{holding.units}</TableCell>
-                <TableCell>{holding.purchaseDate}</TableCell>
-                <TableCell>{safeFormat(holding.currentPrice)}</TableCell>
-                <TableCell>{safeFormat(holding.initialInvestment)}</TableCell>
-                <TableCell className={(holding.gainLoss ?? 0) >= 0 ? "text-green-600" : "text-red-600"}>
-                  {safeFormat(holding.gainLoss)}
-                </TableCell>
-                <TableCell className={(holding.gainLossPercent ?? 0) >= 0 ? "text-green-600" : "text-red-600"}>
-                  {safeFormat(holding.gainLossPercent)}%
-                </TableCell>
                 <TableCell>{safeFormat(holding.portfolioAllocation)}%</TableCell>
                 <TableCell>{holding.sector}</TableCell>
-                <TableCell>{safeFormat(holding.purchasePrice)}</TableCell>
-                <TableCell>{safeFormat(holding.currentValue)}</TableCell>
                 <TableCell>{safeFormat(holding.sectorTotalScore)}</TableCell>
                 <TableCell>{safeFormat(holding.sectorMeanScore)}</TableCell>
                 <TableCell>{safeFormat(holding.securityTotalScore)}</TableCell>

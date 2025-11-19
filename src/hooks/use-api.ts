@@ -31,7 +31,7 @@ export const useBondInfo = (data: BondInfoRequest, enabled: boolean = true) => {
 // Calculate Stock Portfolio Harm Scores
 export const useStockHarmScores = (stocks: StockInfoResponse[]) => {
   const stableKey = stocks.length > 0 
-    ? stocks.map(s => `${s.stock}-${s.units}-${s.purchase_date}`).sort().join(",")
+    ? stocks.map(s => `${s.stock}-${s.weight ?? 0}`).sort().join(",")
     : "empty";
   
   return useQuery({
@@ -56,7 +56,7 @@ export const useStockHarmScores = (stocks: StockInfoResponse[]) => {
 // Calculate Bond Portfolio Harm Scores
 export const useBondHarmScores = (bonds: BondInfoResponse[]) => {
   const stableKey = bonds.length > 0
-    ? bonds.map(b => `${b.cusip}-${b.units}-${b.purchase_date}`).sort().join(",")
+    ? bonds.map(b => `${b.cusip}-${b.weight ?? 0}`).sort().join(",")
     : "empty";
   
   return useQuery({
