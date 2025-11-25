@@ -20,74 +20,89 @@ const Index = () => {
   const [isLoadingDisclaimer, setIsLoadingDisclaimer] = useState<boolean>(false);
   const [disclaimerError, setDisclaimerError] = useState<string>("");
   
-  // Hardcoded initial stocks data
-  const initialStockHoldings: StockInfoResponse[] = [
-    { stock: "GOOG", weight: 2.18, sector: "Communication Services", sector_total_score: 90.00, sector_mean_score: 80.54, security_total_score: 90.00, security_mean_score: 80.54 },
-    { stock: "GOOGL", weight: 1.51, sector: "Communication Services", sector_total_score: 90.00, sector_mean_score: 80.54, security_total_score: 90.00, security_mean_score: 80.54 },
-    { stock: "AMZN", weight: 2.63, sector: "Consumer Cyclical", sector_total_score: 93.00, sector_mean_score: 88.04, security_total_score: 93.00, security_mean_score: 88.04 },
-    { stock: "HD", weight: 0.86, sector: "Consumer Cyclical", sector_total_score: 93.00, sector_mean_score: 88.04, security_total_score: 93.00, security_mean_score: 88.04 },
-    { stock: "MELI", weight: 4.49, sector: "Consumer Cyclical", sector_total_score: 93.00, sector_mean_score: 88.04, security_total_score: 93.00, security_mean_score: 88.04 },
-    { stock: "TJX", weight: 2.66, sector: "Consumer Cyclical", sector_total_score: 93.00, sector_mean_score: 88.04, security_total_score: 93.00, security_mean_score: 88.04 },
-    { stock: "CL", weight: 1.24, sector: "Consumer Defensive", sector_total_score: 0.00, sector_mean_score: 0.00, security_total_score: 0.00, security_mean_score: 0.00 },
-    { stock: "COST", weight: 2.85, sector: "Consumer Defensive", sector_total_score: 0.00, sector_mean_score: 0.00, security_total_score: 0.00, security_mean_score: 0.00 },
-    { stock: "KR", weight: 1.44, sector: "Consumer Defensive", sector_total_score: 0.00, sector_mean_score: 0.00, security_total_score: 0.00, security_mean_score: 0.00 },
-    { stock: "AON", weight: 1.32, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "CB", weight: 1.50, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "PNC", weight: 0.77, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "SPGI", weight: 0.82, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "V", weight: 3.61, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "ABBV", weight: 1.64, sector: "Healthcare", sector_total_score: 80.00, sector_mean_score: 38.84, security_total_score: 80.00, security_mean_score: 38.84 },
-    { stock: "AZN", weight: 1.16, sector: "Healthcare", sector_total_score: 80.00, sector_mean_score: 38.84, security_total_score: 80.00, security_mean_score: 38.84 },
-    { stock: "DHR", weight: 1.25, sector: "Healthcare", sector_total_score: 80.00, sector_mean_score: 38.84, security_total_score: 80.00, security_mean_score: 38.84 },
-    { stock: "LLY", weight: 1.01, sector: "Healthcare", sector_total_score: 80.00, sector_mean_score: 38.84, security_total_score: 80.00, security_mean_score: 38.84 },
-    { stock: "NVS", weight: 1.24, sector: "Healthcare", sector_total_score: 80.00, sector_mean_score: 38.84, security_total_score: 80.00, security_mean_score: 38.84 },
-    { stock: "ADP", weight: 3.29, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "EMR", weight: 1.81, sector: "Industrials", sector_total_score: 83.00, sector_mean_score: 45.72, security_total_score: 83.00, security_mean_score: 45.72 },
-    { stock: "EXPD", weight: 0.19, sector: "Industrials", sector_total_score: 83.00, sector_mean_score: 45.72, security_total_score: 83.00, security_mean_score: 45.72 },
-    { stock: "TRU", weight: 1.01, sector: "Financial Services", sector_total_score: 63.50, sector_mean_score: 0.99, security_total_score: 63.50, security_mean_score: 0.99 },
-    { stock: "UPS", weight: 0.02, sector: "Industrials", sector_total_score: 83.00, sector_mean_score: 45.72, security_total_score: 83.00, security_mean_score: 45.72 },
-    { stock: "AAPL", weight: 3.09, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "ACN", weight: 1.06, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "ADI", weight: 1.57, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "ASML", weight: 1.28, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "CRWD", weight: 1.65, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "DDOG", weight: 0.90, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "MSFT", weight: 3.64, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "NVDA", weight: 1.89, sector: "Technology", sector_total_score: 80.00, sector_mean_score: 100.00, security_total_score: 80.00, security_mean_score: 100.00 },
-    { stock: "ECL", weight: 2.02, sector: "Basic Materials", sector_total_score: 83.50, sector_mean_score: 32.13, security_total_score: 83.50, security_mean_score: 32.13 },
-    { stock: "LIN", weight: 1.95, sector: "Basic Materials", sector_total_score: 83.50, sector_mean_score: 32.13, security_total_score: 83.50, security_mean_score: 32.13 },
-    { stock: "DLR", weight: 1.47, sector: "Real Estate", sector_total_score: 82.50, sector_mean_score: 82.41, security_total_score: 82.50, security_mean_score: 82.41 },
+  // Initial tickers data for batch loading
+  const initialTickers = [
+    { ticker: "GOOG", weight: 2.18 },
+    { ticker: "GOOGL", weight: 1.51 },
+    { ticker: "AMZN", weight: 2.63 },
+    { ticker: "HD", weight: 0.86 },
+    { ticker: "MELI", weight: 4.49 },
+    { ticker: "TJX", weight: 2.66 },
+    { ticker: "CL", weight: 1.24 },
+    { ticker: "COST", weight: 2.85 },
+    { ticker: "KR", weight: 1.44 },
+    { ticker: "AON", weight: 1.32 },
+    { ticker: "CB", weight: 1.50 },
+    { ticker: "PNC", weight: 0.77 },
+    { ticker: "SPGI", weight: 0.82 },
+    { ticker: "V", weight: 3.61 },
+    { ticker: "ABBV", weight: 1.64 },
+    { ticker: "AZN", weight: 1.16 },
+    { ticker: "DHR", weight: 1.25 },
+    { ticker: "LLY", weight: 1.01 },
+    { ticker: "NVS", weight: 1.24 },
+    { ticker: "ADP", weight: 3.29 },
+    { ticker: "EMR", weight: 1.81 },
+    { ticker: "EXPD", weight: 0.19 },
+    { ticker: "TRU", weight: 1.01 },
+    { ticker: "UPS", weight: 0.02 },
+    { ticker: "AAPL", weight: 3.09 },
+    { ticker: "ACN", weight: 1.06 },
+    { ticker: "ADI", weight: 1.57 },
+    { ticker: "ASML", weight: 1.28 },
+    { ticker: "CRWD", weight: 1.65 },
+    { ticker: "DDOG", weight: 0.90 },
+    { ticker: "MSFT", weight: 3.64 },
+    { ticker: "NVDA", weight: 1.89 },
+    { ticker: "ECL", weight: 2.02 },
+    { ticker: "LIN", weight: 1.95 },
+    { ticker: "DLR", weight: 1.47 },
   ];
   
-  // Hardcoded initial portfolio harm scores
-  const hardcodedStockHarmScores = {
-    average_score: 66.06,
-    total_score: 0,
-    quartile: "Quartile 3"
-  };
-  
-  // Holdings state - initialized with hardcoded data
-  const [stockHoldings, setStockHoldings] = useState<StockInfoResponse[]>(initialStockHoldings);
+  // Holdings state - initialized as empty, will be populated from batch endpoint
+  const [stockHoldings, setStockHoldings] = useState<StockInfoResponse[]>([]);
   const [bondHoldings, setBondHoldings] = useState<BondInfoResponse[]>([]);
+  const [isLoadingInitialStocks, setIsLoadingInitialStocks] = useState<boolean>(true);
   
   // Get sectors from API
   const { data: sectors = [], isLoading: isLoadingSectors, error: sectorsError } = useSectors();
   
-  // Check if stocks have changed from initial hardcoded list
-  const hasStocksChanged = stockHoldings.length !== initialStockHoldings.length || 
-    stockHoldings.some((stock, index) => 
-      !initialStockHoldings[index] || 
-      stock.stock !== initialStockHoldings[index].stock || 
-      stock.weight !== initialStockHoldings[index].weight
-    );
+  // Load initial stocks from batch endpoint
+  useEffect(() => {
+    const loadInitialStocks = async () => {
+      setIsLoadingInitialStocks(true);
+      try {
+        const stocks = await api.getBatchStockInfo({ tickers: initialTickers });
+        setStockHoldings(stocks);
+      } catch (error) {
+        console.error("Failed to load initial stocks:", error);
+        // Fallback to empty array on error
+        setStockHoldings([]);
+      } finally {
+        setIsLoadingInitialStocks(false);
+      }
+    };
+    
+    loadInitialStocks();
+  }, []);
   
-  // Calculate harm scores from API when stocks change, otherwise use hardcoded values
+  // Calculate harm scores from API - automatically recalculates when stockHoldings changes
   const { data: apiStockHarmScores, isLoading: isLoadingStockScores, error: stockScoresError } = useStockHarmScores(stockHoldings);
   
-  // Use API scores if stocks have changed, otherwise use hardcoded initial values
-  const stockHarmScores = hasStocksChanged && apiStockHarmScores 
-    ? apiStockHarmScores 
-    : hardcodedStockHarmScores;
+  // Use API scores
+  const stockHarmScores = apiStockHarmScores || {
+    average_score: 0,
+    total_score: 0,
+    quartile: "N/A"
+  };
+
+  // Debug: Log when harm scores are recalculated
+  useEffect(() => {
+    if (stockHoldings.length > 0) {
+      console.log("Stock holdings changed, harm scores will be recalculated:", stockHoldings.length, "stocks");
+      console.log("Current harm scores:", apiStockHarmScores);
+    }
+  }, [stockHoldings, apiStockHarmScores]);
   
   // Debug sectors
   useEffect(() => {
@@ -134,7 +149,13 @@ const Index = () => {
       <ScrollArea className="w-80 border-r">
         <PortfolioSidebar
           onStockAdded={(stock) => {
-            setStockHoldings((prev) => [...prev, stock]);
+            console.log("Stock added with data:", stock);
+            console.log("Current price:", stock.current_price);
+            setStockHoldings((prev) => {
+              const updated = [...prev, stock];
+              console.log("Updated stock holdings:", updated);
+              return updated;
+            });
           }}
           onBondAdded={(bond) => {
             setBondHoldings((prev) => [...prev, bond]);
@@ -184,12 +205,19 @@ const Index = () => {
                 />
               </TabsContent>
               <TabsContent value="stocks" className="mt-4">
-                <PortfolioHoldingsTable 
-                  holdings={stockHoldings} 
-                  type="stocks"
-                  allStockHoldings={stockHoldings}
-                  allBondHoldings={bondHoldings}
-                />
+                {isLoadingInitialStocks ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading initial portfolio data...</p>
+                  </div>
+                ) : (
+                  <PortfolioHoldingsTable 
+                    holdings={stockHoldings} 
+                    type="stocks"
+                    allStockHoldings={stockHoldings}
+                    allBondHoldings={bondHoldings}
+                  />
+                )}
               </TabsContent>
             </Tabs>
           </section>

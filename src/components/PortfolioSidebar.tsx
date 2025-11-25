@@ -61,10 +61,11 @@ export const PortfolioSidebar = ({
       });
 
       console.log("Stock data received:", stockData);
+      console.log("Current price included:", stockData.current_price !== undefined ? `$${stockData.current_price}` : "Not available");
 
       if (onStockAdded) {
         onStockAdded(stockData);
-        console.log("Stock added callback called");
+        console.log("Stock added callback called - harm scores will be recalculated automatically");
       }
 
       // Reset form

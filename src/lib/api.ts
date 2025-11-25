@@ -15,15 +15,39 @@ export interface StockInfoResponse {
   sector_mean_score: number;
   security_total_score: number;
   security_mean_score: number;
+  // Always included in /api/portfolio/stocks/info and /api/portfolio/stocks/batch responses
+  current_price?: number;
   // Legacy fields for backward compatibility (may not be present in new API)
   units?: number;
   purchase_date?: string;
   purchase_price?: number;
-  current_price?: number;
   initial_investment?: number;
   current_value?: number;
   gain_loss?: number;
   gain_loss_percentage?: number;
+}
+
+// Batch endpoint types
+export interface BatchStockInfoRequest {
+  tickers: Array<{
+    ticker: string;
+    weight: number;
+  }>;
+}
+
+export interface BatchStockInfoResponseItem {
+  ticker: string;
+  weight: number;
+  current_price: number;
+  sector: string;
+  sector_total_score: number;
+  sector_mean_score: number;
+  security_total_score: number;
+  security_mean_score: number;
+}
+
+export interface BatchStockInfoResponse {
+  stocks: BatchStockInfoResponseItem[];
 }
 
 export interface BondInfoRequest {
@@ -149,6 +173,32 @@ export const api = {
       throw new Error(`Failed to get stock info: ${response.statusText}`);
     }
     return response.json();
+  },
+
+  // Batch Stock Information (for initial chart loading)
+  async getBatchStockInfo(data: BatchStockInfoRequest): Promise<StockInfoResponse[]> {
+    const response = await fetch(`${API_BASE_URL}/api/portfolio/stocks/batch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to get batch stock info: ${response.statusText}`);
+    }
+    const batchResponse: BatchStockInfoResponse = await response.json();
+    // Map batch response to StockInfoResponse format (ticker -> stock)
+    return batchResponse.stocks.map((item) => ({
+      stock: item.ticker,
+      weight: item.weight,
+      sector: item.sector,
+      sector_total_score: item.sector_total_score,
+      sector_mean_score: item.sector_mean_score,
+      security_total_score: item.security_total_score,
+      security_mean_score: item.security_mean_score,
+      current_price: item.current_price,
+    }));
   },
 
   // Bond Information
