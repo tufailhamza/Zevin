@@ -163,10 +163,9 @@ export const PortfolioHoldingsTable = ({
               <TableHead className="font-medium text-foreground">Weight (%)</TableHead>
               <TableHead className="font-medium text-foreground">Current Price</TableHead>
               <TableHead className="font-medium text-foreground">{type === "stocks" ? "Sector" : "Industry Group"}</TableHead>
+              <TableHead className="font-medium text-foreground">Normalized Sector Score</TableHead>
               <TableHead className="font-medium text-foreground">Weighted Harm Score</TableHead>
-              <TableHead className="font-medium text-foreground">Sector Mean Score</TableHead>
               <TableHead className="font-medium text-foreground">Portfolio Harm Contribution</TableHead>
-              <TableHead className="font-medium text-foreground">Security Mean Score</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -181,10 +180,9 @@ export const PortfolioHoldingsTable = ({
                     : "N/A"}
                 </TableCell>
                 <TableCell>{holding.sector}</TableCell>
-                <TableCell>{safeFormat(holding.weightedHarmScore)}</TableCell>
                 <TableCell>{safeFormat(holding.sectorMeanScore)}</TableCell>
+                <TableCell>{safeFormat(holding.weightedHarmScore * 100)}</TableCell>
                 <TableCell>{safeFormat(holding.portfolioHarmContribution)}%</TableCell>
-                <TableCell>{safeFormat(holding.securityMeanScore)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

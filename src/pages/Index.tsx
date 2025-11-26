@@ -181,107 +181,25 @@ const Index = () => {
           {/* Portfolio Holdings Summary */}
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold border-b-2 border-primary pb-2">Portfolio Holdings Summary</h2>
-            <Tabs defaultValue="stocks" className="w-full">
-              <TabsList className="bg-transparent border-b w-full justify-start rounded-none h-auto p-0">
-                <TabsTrigger 
-                  value="bond" 
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none data-[state=active]:text-accent"
-                >
-                  Bond Portfolio
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="stocks"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none"
-                >
-                  Stocks
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="bond" className="mt-4">
-                <PortfolioHoldingsTable 
-                  holdings={bondHoldings} 
-                  type="bonds"
-                  allStockHoldings={stockHoldings}
-                  allBondHoldings={bondHoldings}
-                />
-              </TabsContent>
-              <TabsContent value="stocks" className="mt-4">
-                {isLoadingInitialStocks ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Loading initial portfolio data...</p>
-                  </div>
-                ) : (
-                  <PortfolioHoldingsTable 
-                    holdings={stockHoldings} 
-                    type="stocks"
-                    allStockHoldings={stockHoldings}
-                    allBondHoldings={bondHoldings}
-                  />
-                )}
-              </TabsContent>
-            </Tabs>
+            {isLoadingInitialStocks ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading initial portfolio data...</p>
+              </div>
+            ) : (
+              <PortfolioHoldingsTable 
+                holdings={stockHoldings} 
+                type="stocks"
+                allStockHoldings={stockHoldings}
+                allBondHoldings={bondHoldings}
+              />
+            )}
           </section>
 
           {/* Portfolio Racial Equity Summary */}
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold border-b-2 border-primary pb-2">Portfolio Racial Equity Summary</h2>
-            <Tabs defaultValue="stock-scores" className="w-full">
-              <TabsList className="bg-transparent border-b w-full justify-start rounded-none h-auto p-0">
-                <TabsTrigger 
-                  value="bond-scores" 
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none data-[state=active]:text-accent"
-                >
-                  Bond Portfolio Harm Scores
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="stock-scores"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:bg-transparent rounded-none"
-                >
-                  Stock Portfolio Harm Scores
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="bond-scores" className="mt-6">
-                {isLoadingBondScores ? (
-                  <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-muted-foreground">Calculating bond portfolio harm scores...</p>
-                  </div>
-                ) : bondScoresError ? (
-                  <div className="text-center py-8 border rounded-lg bg-destructive/10">
-                    <p className="text-destructive font-semibold mb-2">Error calculating scores</p>
-                    <p className="text-sm text-muted-foreground">
-                      {bondScoresError instanceof Error 
-                        ? bondScoresError.message 
-                        : String(bondScoresError) || "Failed to calculate bond harm scores"}
-                    </p>
-                  </div>
-                ) : bondHoldings.length === 0 ? (
-                  <div className="text-center py-8 border rounded-lg">
-                    <p className="text-muted-foreground">Add bonds to your portfolio to see harm scores</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <MetricCard 
-                        title="Average Portfolio Harm Score" 
-                        value={
-                          bondHarmScores?.average_score != null 
-                            ? bondHarmScores.average_score.toFixed(2) 
-                            : "0.0"
-                        }
-                        tooltip="This score represents a portfolio level weighted average based on the number of units for each security. The score is based on a scale of 1-100, where 1 is the score for the highest harm sector and 100 is the score for the lowest harm sector."
-                      />
-                      <MetricCard 
-                        title="Total Portfolio Harm Quartile" 
-                        value={bondHarmScores?.quartile || "N/A"}
-                        tooltip="This score shows where the portfolio sits relative to other potential portfolio compositions. Portfolios in the first quartile (highest harm) range from 1.00-38.80, the second quartile (moderate-high harm) ranges from 38.81 to 50.00, the third quartile (moderate low) ranges from 50.01-82.40 and the fourth quartile (lowest harm) ranges from 82.41-100.00."
-                      />
-                    </div>
-                   
-                  </div>
-                )}
-              </TabsContent>
-              <TabsContent value="stock-scores" className="mt-6">
+            <div className="mt-6">
                 {isLoadingStockScores ? (
                   <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -321,8 +239,7 @@ const Index = () => {
                     
                   </div>
                 )}
-              </TabsContent>
-            </Tabs>
+            </div>
           </section>
 
           {/* Corporate Racial Equity Canvas */}
