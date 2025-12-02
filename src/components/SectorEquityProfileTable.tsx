@@ -105,8 +105,8 @@ export const SectorEquityProfileTable = ({ sector }: SectorEquityProfileTablePro
           bottom: 0
         }}
       >
-        <div style={{ minWidth: "2000px", width: "2000px" }}>
-          <Table style={{ tableLayout: "fixed", width: "2000px" }}>
+        <div style={{ minWidth: "1640px", width: "1640px" }}>
+          <Table style={{ tableLayout: "fixed", width: "1640px" }}>
           <TableHeader>
             <TableRow className="bg-table-header hover:bg-table-header">
               <TableHead className="font-semibold" style={{ width: "150px" }}>SDH Indicator</TableHead>
@@ -119,9 +119,6 @@ export const SectorEquityProfileTable = ({ sector }: SectorEquityProfileTablePro
               <TableHead className="font-semibold" style={{ width: "100px" }}>Equity Direction</TableHead>
               <TableHead className="font-semibold" style={{ width: "100px" }}>Equity Duration</TableHead>
               <TableHead className="font-semibold" style={{ width: "100px" }}>Total Score</TableHead>
-              <TableHead className="font-semibold" style={{ width: "120px" }}>Direct_Indirect</TableHead>
-              <TableHead className="font-semibold" style={{ width: "120px" }}>Direct_Indirect_1</TableHead>
-              <TableHead className="font-semibold" style={{ width: "120px" }}>Core_Peripheral</TableHead>
               <TableHead className="font-semibold" style={{ width: "150px" }}>Citation_1</TableHead>
               <TableHead className="font-semibold" style={{ width: "150px" }}>Citation_2</TableHead>
             </TableRow>
@@ -176,15 +173,6 @@ export const SectorEquityProfileTable = ({ sector }: SectorEquityProfileTablePro
                         return value != null && !isNaN(value) ? Number(value).toFixed(2) : "-";
                       })()}
                     </TableCell>
-                    <TableCell style={{ width: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {row["Direct_Indirect"] || row.direct_indirect || "-"}
-                    </TableCell>
-                    <TableCell style={{ width: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {row["Direct_Indirect_1"] || row.direct_indirect_1 || "-"}
-                    </TableCell>
-                    <TableCell style={{ width: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {row["Core_Peripheral"] || row.core_peripheral || "-"}
-                    </TableCell>
                     <TableCell style={{ width: "150px" }}>
                       <LongTextCell text={row["Citation_1"] || row.citation_1 || ""} label="Citation 1" />
                     </TableCell>
@@ -197,7 +185,7 @@ export const SectorEquityProfileTable = ({ sector }: SectorEquityProfileTablePro
                 console.error("Error rendering row:", err, row);
                 return (
                   <TableRow key={index}>
-                    <TableCell colSpan={15} className="text-destructive">
+                    <TableCell colSpan={12} className="text-destructive">
                       Error rendering row {index + 1}
                     </TableCell>
                   </TableRow>

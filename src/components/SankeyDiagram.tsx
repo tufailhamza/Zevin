@@ -6,17 +6,21 @@ interface SankeyDiagramProps {
 }
 
 // Convert API sankey data format to Google Charts format
-const convertSankeyData = (sankeyData: any) => {
-  if (!sankeyData) return [["From", "To", "Weight"]];
+// The API returns values as (15 - Total Score), so we reverse to get the original Total Score for tooltips
+const convertSankeyData = (sankeyData: any, maxValue: number = 15) => {
+  if (!sankeyData) return [["From", "To", "Weight", { role: 'tooltip', type: 'string' }]];
 
   const { node_list, source, target, value } = sankeyData;
-  const chartData: any[] = [["From", "To", "Weight"]];
+  const chartData: any[] = [["From", "To", "Weight", { role: 'tooltip', type: 'string' }]];
 
   for (let i = 0; i < source.length; i++) {
     const fromNode = node_list[source[i]];
     const toNode = node_list[target[i]];
     const weight = value[i];
-    chartData.push([fromNode, toNode, weight]);
+    // Calculate the original Total Score (reverse the 15-X transformation)
+    const originalScore = maxValue - weight;
+    const tooltip = `${fromNode} → ${toNode}\nTotal Score: ${originalScore.toFixed(2)}`;
+    chartData.push([fromNode, toNode, weight, tooltip]);
   }
 
   return chartData;
@@ -47,7 +51,7 @@ export const SankeyDiagram = ({ sector }: SankeyDiagramProps) => {
     );
   }
 
-  const data = convertSankeyData(sankeyData);
+  const data = convertSankeyData(sankeyData, 15);
   const nodeColors = sankeyData?.node_colors || ["#2563eb", "#ea580c", "#16a34a", "#dc2626"];
   const levelColors = sankeyData?.level_colors || {
     sector: "#2563eb",
