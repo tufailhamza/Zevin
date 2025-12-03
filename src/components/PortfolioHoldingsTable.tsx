@@ -6,6 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import { StockInfoResponse, BondInfoResponse } from "@/lib/api";
 
 interface PortfolioHoldingsTableProps {
@@ -163,8 +165,32 @@ export const PortfolioHoldingsTable = ({
               <TableHead className="font-medium text-foreground">Weight (%)</TableHead>
               <TableHead className="font-medium text-foreground">Current Price</TableHead>
               <TableHead className="font-medium text-foreground">{type === "stocks" ? "Sector" : "Industry Group"}</TableHead>
-              <TableHead className="font-medium text-foreground">Normalized Sector Score</TableHead>
-              <TableHead className="font-medium text-foreground">Weighted Harm Score</TableHead>
+              <TableHead className="font-medium text-foreground">
+                <div className="flex items-center gap-1">
+                  Normalized Sector Score
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="text-sm">GICS sector-level racial equity score normalized on a 0-100 scale where 0 is the lowest scoring (high equity) sector and 100 is the highest scoring (lowest equity) sector.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TableHead>
+              <TableHead className="font-medium text-foreground">
+                <div className="flex items-center gap-1">
+                  Weighted Harm Score
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs">
+                      <p className="text-sm">The normalized sector score weighted by the number of shares or portfolio percent share. The metric allows for a like-for-like comparison across public equity holdings.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </TableHead>
               <TableHead className="font-medium text-foreground">Portfolio Harm Contribution</TableHead>
             </TableRow>
           </TableHeader>
